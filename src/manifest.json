@@ -1,0 +1,17 @@
+{
+	"name": "Maimai B50 Extension",
+	"description": "Extension for showing Maimai B50 scores.",
+	"version": "1.0",
+	"manifest_version": 2,
+	"browser_action": {
+		"default_popup": "popup.html",
+		"default_icon": "icon.png"
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://maimaidx-eng.com/*"],
+			"js": ["api.js", "content.js"]
+		}
+	],
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
