@@ -132,10 +132,10 @@ async function removeBasicDOMShit(dom) {
 	}
 	dom.documentElement.querySelector("header")?.remove();
 	dom.documentElement.querySelector("footer")?.remove();
-	dom.documentElement.querySelector(".title.m_10")?.remove();
-	dom.documentElement.querySelector(".m_t_5.m_b_10.t_l.f_0")?.remove();
-	//dom.documentElement.querySelector(".m_15")?.remove();
-	dom.documentElement.querySelector(".f_0")?.remove();
+	// dom.documentElement.querySelector(".title.m_10")?.remove();
+	// dom.documentElement.querySelector(".m_t_5.m_b_10.t_l.f_0")?.remove();
+	// dom.documentElement.querySelector(".m_15")?.remove();
+	// dom.documentElement.querySelector(".f_0")?.remove();
 }
 
 /**
@@ -359,8 +359,6 @@ async function getDetailedMusicRecord(idx) {
     if (!(dom.documentElement.lastElementChild.id)) dom.documentElement.lastElementChild.remove();
 
 	for (const node of dom.documentElement.children) {
-        if (!node.classList.contains("music_all_score_back")) continue;
-
 		const innerBlock = node.querySelector(".t_r.f_r");
 		const innerBlock2 = node.lastElementChild;
 
