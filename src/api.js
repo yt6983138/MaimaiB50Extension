@@ -349,6 +349,8 @@ async function getDetailedMusicRecord(idx) {
     if (!(dom.documentElement.lastElementChild.id)) dom.documentElement.lastElementChild.remove();
 
 	for (const node of dom.documentElement.children) {
+        if (!node.classList.contains("music_all_score_back")) continue;
+        
 		const innerBlock = node.querySelector(".t_r.f_r");
 		const innerBlock2 = node.lastElementChild;
 
@@ -380,6 +382,7 @@ async function getAllRecordsBySearch() {
 
 	let delay = 0;
 	for (const node of dom.documentElement.children) {
+        if (!node.classList.contains("music_all_score_back")) continue;
 		setTimeout(async () => {
 			await getDetailedMusicRecord(node.firstElementChild.querySelector("input").value);
 		}, delay);
@@ -391,6 +394,8 @@ async function getBasicRecords() {
 	const dom = await getResponseAsDOM(await fetch(MAIMAI_RECORD_URL));
 	removeBasicDOMShit(dom);
 	for (const node of dom.documentElement.children) {
+        if (!node.classList.contains("p_10")) continue;
+
 		const topContainer = node.querySelector(".playlog_top_container");
 		const subtitle = topContainer.querySelector(".sub_title");
 
