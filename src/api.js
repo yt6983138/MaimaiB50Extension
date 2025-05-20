@@ -350,7 +350,7 @@ async function getDetailedMusicRecord(idx) {
 
 	for (const node of dom.documentElement.children) {
         if (!node.classList.contains("music_all_score_back")) continue;
-        
+
 		const innerBlock = node.querySelector(".t_r.f_r");
 		const innerBlock2 = node.lastElementChild;
 
@@ -396,13 +396,13 @@ async function getBasicRecords() {
 	for (const node of dom.documentElement.children) {
         if (!node.classList.contains("p_10")) continue;
 
-		const topContainer = node.querySelector(".playlog_top_container");
+		const topContainer = node.firstElementChild;
 		const subtitle = topContainer.querySelector(".sub_title");
 
-		const advancedContainer = node.querySelector(".playlog_advanced_container");
-		const basicBlock = advancedContainer.querySelector(".basic_block");
-		const prBlock = advancedContainer.children[1];
-		const playResult = advancedContainer.querySelector(".playlog_result_block");
+		const moreContainer = node.lastElementChild;
+		const basicBlock = moreContainer.querySelector(".basic_block");
+		const prBlock = moreContainer.children[1];
+		const playResult = moreContainer.querySelector(".playlog_result_block");
 
 		const playAchievement = playResult.querySelector(".playlog_achievement_txt");
 		const playResultInnerBlock = playResult.querySelector(".playlog_result_innerblock");
