@@ -236,10 +236,11 @@ function parseScoreRankFromUrl(url) {
 	const match = url.match(/\/(\w+)\.png/);
 	if (match) {
 		const scoreRank = match[1].toUpperCase()
-            .replaceAll("MUSIC_ICON_SP", "SPLUS")
-            .replaceAll("MUSIC_ICON_SSP", "SSPLUS")
-            .replaceAll("MUSIC_ICON_SSSP", "SSSPLUS")
             .replaceAll("MUSIC_ICON_", "");
+        if (scoreRank === "SP") return ScoreRank.SPLUS;
+        if (scoreRank === "SSP") return ScoreRank.SSPLUS;
+        if (scoreRank === "SSSP") return ScoreRank.SSSPLUS;
+
 		if (scoreRank in ScoreRank) {
 			return ScoreRank[scoreRank];
 		}
@@ -257,7 +258,12 @@ function parseFcTypeFromUrl(url) {
 	// https://maimaidx-eng.com/maimai-mobile/img/music_icon_fc.png
 	const match = url.match(/\/(\w+)\.png/);
 	if (match) {
-		const fcType = match[1].toUpperCase().replaceAll("MUSIC_ICON_", "").replaceAll("APP", "APPLUS").replaceAll("FCP", "FCPLUS").replaceAll("BACK", "DUMMY");
+		const fcType = match[1]
+            .toUpperCase()
+            .replaceAll("MUSIC_ICON_", "")
+            .replaceAll("BACK", "DUMMY");
+        if (fcType === "FCP") return FcType.FCPLUS;
+        if (fcType === "APP") return FcType.APPLUS;
 
 		if (fcType.includes("DUMMY")) return FcType.NONE;
 		if (fcType in FcType) {
@@ -277,7 +283,11 @@ function parseSyncPlayTypeFromUrl(url) {
 	// https://maimaidx-eng.com/maimai-mobile/img/music_icon_sync.png
 	const match = url.match(/\/(\w+)\.png/);
 	if (match) {
-		const syncPlayType = match[1].toUpperCase().replaceAll("MUSIC_ICON_", "").replaceAll("FSDP", "FSDPLUS").replaceAll("FSP", "FSPLUS").replaceAll("BACK", "DUMMY");
+		const syncPlayType = match[1].toUpperCase()
+        .replaceAll("MUSIC_ICON_", "")
+        .replaceAll("BACK", "DUMMY");
+        if (syncPlayType === "FSDP") return SyncPlayType.FSDPLUS;
+        if (syncPlayType === "FSP") return SyncPlayType.FSPLUS;
 
 		if (syncPlayType.includes("DUMMY")) return SyncPlayType.NONE;
 		if (syncPlayType in SyncPlayType) {
