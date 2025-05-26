@@ -10,7 +10,7 @@
 	"content_scripts": [
 		{
 			"matches": ["https://maimaidx-eng.com/*"],
-			"js": ["api.js", "content.js"]
+			"js": ["api.js"]
 		}
 	],
 	"host_permissions": ["https://maimaidx-eng.com/*"],
