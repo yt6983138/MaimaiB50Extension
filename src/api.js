@@ -34,6 +34,19 @@ const Difficulty = {
     all: 99,       // 全部難度 - 用於搜尋時選擇所有難度
 };
 /**
+ * 分類枚舉 - 定義歌曲的類別
+ * @enum {number}
+ */
+const MusicCategory = {
+  DEFAULT: 0, // 之後若有需要再補完（Shirako: 補完了）
+  POPS: 1,
+  Nico: 2,
+  Touhou: 3,
+  Variety: 4,
+  maimai: 5,
+  geki_chu: 6,
+};
+/**
  * 通關類型枚舉 - 定義歌曲的通關狀態
  * @enum {number}
  */

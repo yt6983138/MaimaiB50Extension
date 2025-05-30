@@ -67,7 +67,13 @@ export const SyncPlayType = Object.freeze({
 });
 
 export const MusicCategory = Object.freeze({
-  DEFAULT: 0, // 之後若有需要再補完
+  DEFAULT: 0, // 之後若有需要再補完（Shirako: 補完了）
+  POPS: 1,
+  Nico: 2,
+  Touhou: 3,
+  Variety: 4,
+  maimai: 5,
+  geki_chu: 6,
 });
 
 // --------------------
