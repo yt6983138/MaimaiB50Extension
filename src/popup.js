@@ -73,17 +73,21 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (!ensureAbleToExecute()) {
                             throw new Error('請確認您在 maimai DX 官方網站上');
                         }
+
+                        await getBest50(500);
                         
-                        const records = await getAllRecordsBySearch(500);
+                        // const records = await getAllRecordsBySearch(500);
                         
-                        // 觸發 content.js 中的顯示函數
-                        if (typeof displayResults === 'function') {
-                            displayResults('最佳成績 (各難度前10名)', records);
-                        } else {
-                            console.log('最佳成績:', records);
-                        }
+                        // // 觸發 content.js 中的顯示函數
+                        // if (typeof displayResults === 'function') {
+                        //     displayResults('最佳成績 (各難度前10名)', records);
+                        // } else {
+                        //     console.log('最佳成績:', records);
+                        // }
                         
-                        console.log(`✅ 成功載入 ${records.length} 筆最佳成績`);
+                        // console.log(`✅ 成功載入 ${records.length} 筆最佳成績`);
+
+                        console.log(`✅ 成功載入最佳成績`);
                         
                     } catch (error) {
                         console.error('❌ 載入最佳成績失敗:', error);

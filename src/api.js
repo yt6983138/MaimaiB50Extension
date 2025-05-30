@@ -3,22 +3,25 @@
 // 提供外部呼叫的高階函式，實際邏輯委派給各自 fetcher 模組
 // =====================================
 
-import { getBestScores } from "./bestScoreFetcher.js";
-import { getRecentRecords } from "./recentRecordFetcher.js";
+// 視乎不支援ES寫法，以下程式碼已被禁用
+// =====================================
+// import { getBestScores } from "./bestScoreFetcher.js";
+// import { getRecentRecords } from "./recentRecordFetcher.js";
 
-export {
-  /**
-   * 取得所有難度的最佳成績清單
-   * @see bestScoreFetcher.js
-   */
-  getBestScores,
+// export {
+//   /**
+//    * 取得所有難度的最佳成績清單
+//    * @see bestScoreFetcher.js
+//    */
+//   getBestScores,
 
-  /**
-   * 取得最近遊玩紀錄
-   * @see recentRecordFetcher.js
-   */
-  getRecentRecords,
-};
+//   /**
+//    * 取得最近遊玩紀錄
+//    * @see recentRecordFetcher.js
+//    */
+//   getRecentRecords,
+// };
+// =====================================
 
 /**
  * 難度枚舉 - 定義 maimai DX 的五種難度等級
@@ -998,7 +1001,8 @@ function parseMusicSortRecords(dom, difficulty) {
             
             // 建立基本記錄物件
             const record = new BasicRecord(
-                difficulty,           // 難度
+                Difficulty.master,   // 難度（假設是紫譜）
+                MusicCategory.POPS,  // 歌曲分類（假設是maimai）
                 0,                   // 曲目編號（在排序頁面中不適用）
                 new Date(),          // 遊玩時間（使用當前時間）
                 ClearType.clear,     // 通關狀態（假設已通關）
@@ -1007,11 +1011,11 @@ function parseMusicSortRecords(dom, difficulty) {
                 musicKind,           // 歌曲類型
                 scoreRank,           // 成績等級
                 achievementPercent,  // 達成率
-                newRecord,           // 是否為達成率新記錄
+                true,                // 是否為達成率新記錄（假設是）
                 fcType,              // FC 類型
                 syncPlayType,        // 同步類型
-                syncPlayRank,        // 同步排名
-                isDeluxscoreNewRecord,               // 是否為 DX 分數新記錄
+                1,                   // 同步排名（假設是第一名）
+                true,                // 是否為 DX 分數新記錄（假設是）
                 deluxscoreMax,       // DX 分數上限
                 deluxscore,          // DX 分數
                 detailId             // 詳細記錄 ID
@@ -1060,6 +1064,7 @@ async function getBasicRecords() {
 
         // datas
         const difficulty = parseDifficultyFromUrl(topContainer.querySelector(".playlog_diff").src);
+        const category = MusicCategory.POPS; // 假設是POPS & ANIME
         const trackNumber = parseTrackNumberFromText(subtitle.firstElementChild.innerText);
         const playTime = new Date(subtitle.lastElementChild.innerText);
 
@@ -1084,8 +1089,126 @@ async function getBasicRecords() {
 
         const detailId = playResult.querySelector("form").querySelector("input").value;
 
-        records.push(new BasicRecord(difficulty, trackNumber, playTime, clearType, displayName, musicId, musicKind, scoreRank, achievementPercent, isAchievementNewRecord, fcType, syncPlayType, syncPlayRank, isDeluxscoreNewRecord, deluxscoreMax, deluxscore, detailId));
+        records.push(new BasicRecord(difficulty, category, trackNumber, playTime, clearType, displayName, musicId, musicKind, scoreRank, achievementPercent, isAchievementNewRecord, fcType, syncPlayType, syncPlayRank, isDeluxscoreNewRecord, deluxscoreMax, deluxscore, detailId));
     }
 
     return records;
+}
+
+// Best 50 url
+const MAIMAI_RECORD_BEST_RATING = `https://maimaidx-eng.com/maimai-mobile/home/ratingTargetMusic/`;
+
+// Get Best 50 Score
+async function getBest50(cooldown = 400) {
+    // 確保在正確的網站環境中執行
+    ensureAbleToExecuteOrThrow();
+    console.log("Fetching B50...");
+
+    // 儲存所有記錄的陣列
+    const allRecords = [];
+
+    // New Best 15
+    const newBest = [];
+
+    // Old Best 35
+    const oldBest = [];
+    
+    // 定義要搜尋的所有難度
+    const difficulties = [
+        Difficulty.basic,     // 基礎難度
+        Difficulty.advanced,  // 進階難度
+        Difficulty.expert,    // 專家難度
+        Difficulty.master,    // 大師難度
+        Difficulty.remaster   // 重製大師難度
+    ];
+
+    try {
+        // 發送請求並取得該難度的排序頁面 DOM
+        const dom = await getResponseAsDOM(await fetch(MAIMAI_RECORD_BEST_RATING));
+        // 清理 DOM
+        removeBasicDOMShit(dom);
+
+        // 選取Best 50和Selection 20的節點
+        const recordNodes = dom.querySelectorAll(".pointer"); // 沒意外的話剛好70個
+
+        for (const node of recordNodes) {
+            // 檢查是否有難度圖片，沒有則跳過
+            const diffImg = node.querySelector('img[src*="/diff_"]');
+            if (!diffImg) continue;
+            
+            // 解析歌曲類型（DX 或 Standard）
+            const musicKindImg = node.querySelector('.music_kind_icon');
+            let musicKind = MusicKind.dx; // 預設為 DX
+            if (musicKindImg) {
+                try {
+                    musicKind = parseMusicKindFromUrl(musicKindImg.src);
+                } catch (e) {
+                    // 如果解析失敗，輸出警告但繼續使用預設值
+                    console.warn('cannot parse music kind:', musicKindImg.src);
+                }
+            }
+
+            // 解析歌曲等級
+            const levelBlock = node.querySelector('.music_lv_block');
+            let songDisplayLevel = 0;
+            if (levelBlock) {
+                const levelText = levelBlock.textContent.trim();
+                // 將 "+" 轉換為 ".5"（例如 "13+" 變成 "13.5"）
+                songDisplayLevel = parseFloat(levelText.replace('+', '.5')) || 0;
+            }
+
+            // 解析歌曲名稱
+            const nameBlock = node.querySelector('.music_name_block');
+            const displayName = nameBlock ? nameBlock.textContent.trim() : 'Unknown';
+
+            // 解析成績資訊
+            const scoreBlocks = node.querySelectorAll('.music_score_block');
+            let achievementPercent = 0;
+            if (scoreBlocks.length > 0) {
+                // 移除百分比符號並解析達成率
+                const achievementText = scoreBlocks[0].textContent.replace('%', '').trim();
+                achievementPercent = parseFloat(achievementText) || 0;
+            }
+            
+            // 初始化成績相關變數
+            let scoreRank = ScoreRank.d;           // 成績等級，預設為 D
+            let fcType = FcType.none;              // FC 類型，預設為無
+            let syncPlayType = SyncPlayType.none;  // 同步類型，預設為無
+            let deluxscoreMax = 0;                 // DX 分數上限，預設為 0
+            let deluxscore = 0;                    // DX 分數，預設為 0
+
+            // 取得詳細記錄的 ID（用於後續查詢詳細資訊）
+            const hiddenInput = node.querySelector('input[name="idx"]');
+            const detailId = hiddenInput ? hiddenInput.value : '';
+
+            // 建立基本記錄物件
+            const record = new BasicRecord(
+                Difficulty.master,   // 難度（假設是紫譜）
+                MusicCategory.POPS,  // 歌曲分類（假設是POPS & ANIME）
+                0,                   // 曲目編號（在排序頁面中不適用）
+                new Date(),          // 遊玩時間（使用當前時間）
+                ClearType.clear,     // 通關狀態（假設已通關）
+                displayName,         // 歌曲名稱
+                '',                  // 歌曲 ID（在此頁面無法取得）
+                musicKind,           // 歌曲類型
+                scoreRank,           // 成績等級
+                achievementPercent,  // 達成率
+                true,                // 是否為達成率新記錄（假設是）
+                fcType,              // FC 類型
+                syncPlayType,        // 同步類型
+                1,                   // 同步排名（假設是第一名）
+                true,                // 是否為 DX 分數新記錄（假設是）
+                deluxscoreMax,       // DX 分數上限
+                deluxscore,          // DX 分數
+                detailId             // 詳細記錄 ID
+            );
+
+            allRecords.push(record);
+        }
+    } catch (error) {
+        // 如果某個難度載入失敗，輸出錯誤但繼續處理其他難度
+        console.error(`Loading Best 50 records failed:`, error);
+    }
+
+    console.log(allRecords);
 }
