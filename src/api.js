@@ -1204,11 +1204,57 @@ async function getBest50(cooldown = 400) {
             );
 
             allRecords.push(record);
+            let r = calculateRating(songDisplayLevel, achievementPercent);
+            console.log(r);
         }
     } catch (error) {
         // 如果某個難度載入失敗，輸出錯誤但繼續處理其他難度
         console.error(`Loading Best 50 records failed:`, error);
     }
 
-    console.log(allRecords);
+    newBest.push(...allRecords.slice(0, 15));
+    oldBest.push(...allRecords.slice(15, 50));
+
+    // console.log(allRecords);
+    console.log(newBest);
+    console.log(oldBest);
+}
+
+function calculateRating(level = 10.0, achievementPercent = 97) {
+    let factor, rating = 0;
+
+    const factorList = [
+        [0, 0],
+        [10, 1.6],
+        [20, 3.2],
+        [30, 4.8],
+        [40, 6.4],
+        [50, 8.0],
+        [60, 9.6],
+        [70, 11.2],
+        [75, 12.0],
+        [80, 13.6],
+        [90, 15.2],
+        [94, 16.8],
+        [97, 20.0],
+        [98, 20.3],
+        [99, 20.8],
+        [99.5, 21.1],
+        [100.0, 21.6],
+        [100.5, 22.4],
+    ];
+
+    if (achievementPercent >= 100.5) factor = 22.4;
+    else {
+        for (let i = 1; i < factorList.length; i++) {
+            if (achievementPercent < factorList[i][0]) {
+                factor = factorList[i - 1][1];
+                break;
+            }
+        }
+    }
+
+    rating = Math.floor(level * (achievementPercent / 100) * factor);
+
+    return rating;
 }
