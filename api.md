@@ -543,6 +543,7 @@ const html = formatRecordsForDisplay(records);
 ```typescript
 class BasicRecord {
     difficulty: Difficulty;          // 難度
+    musicCategory: MusicCategory;    // 歌曲分類
     trackNumber: number;             // 曲目編號
     playTime: Date;                  // 遊玩時間
     clearType: ClearType;            // 通關類型

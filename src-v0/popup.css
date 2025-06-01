@@ -1,0 +1,55 @@
+/* 基本樣式 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    width: 300px;
+    background: #f8f9fa;
+    color: #2c3e50;
+}
+
+h1 {
+    color: #ff6b9d;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+p {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #ff6b9d;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #e55a87;
+}
+
+button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+#status {
+    font-size: 12px;
+    color: #7f8c8d;
+    text-align: center;
+    margin-top: 10px;
+    min-height: 20px;
+}
