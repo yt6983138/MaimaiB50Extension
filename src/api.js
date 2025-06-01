@@ -116,7 +116,7 @@ async function mai2_BestRecords() {
     console.log("mai2 owo");
 }
 
-async function mai2_CalculateRating(level = 1.0, achievementPercent = 97.0) {
+function mai2_CalculateRating(level = 10.0, achievementPercent = 97.0) {
     let factor, rating = 0;
 
     const factorList = [
@@ -159,4 +159,4 @@ async function chu3_RecentRecords() { }
 
 async function chu3_BestScores() { }
 
-async function chu3_CalculateRating(level = 10.0, score = 975000) { }
+function chu3_CalculateRating(level = 10.0, score = 975000) { }
