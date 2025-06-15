@@ -1,3 +1,5 @@
+# THIS PROJECT IS UNDER TRANSFERATION, CURRNET REPO OWNER DOES NOT PROVIDE SUPPORT.
+
 # Maimai B50 Extension
 
 一個用於分析 maimai DX 音樂遊戲成績的 Chrome 瀏覽器擴充功能。
